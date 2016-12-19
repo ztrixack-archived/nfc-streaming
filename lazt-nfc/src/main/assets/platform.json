@@ -1,0 +1,52 @@
+[
+  {
+    "format": "Type 1",
+    "compliant": "NFC-A",
+    "spec": "ISO/IEC 14443-3 A",
+    "speed": "106 kbit/sec",
+    "size": "454 Bytes",
+    "access": "Read/Write",
+    "price": "Low",
+    "products": "Broadcom Topaz"
+  },
+  {
+    "format": "Type 2",
+    "compliant": "NFC-A",
+    "spec": "ISO/IEC 14443-3 A",
+    "speed": "106 kbit/sec",
+    "size": "48/128/144/504/888/1904 bytes",
+    "access": "Read/Write or Read-only",
+    "price": "Low",
+    "products": "NXP Mifare Ultralight, NXP Mifare Ultralight C, NXP NTAG 21s (F), NXP NTAG I2C"
+  },
+  {
+    "format": "Type 3",
+    "compliant": "NFC-F",
+    "base": "JIS 6319-4",
+    "speed": "212 kbit/sec",
+    "spec": "1/4/9 KBytes",
+    "access": "Read/Write or Read-only",
+    "price": "High",
+    "products": "Sony Felica"
+  },
+  {
+    "format": "Type 4",
+    "compliant": "NFC-A/B",
+    "base": "ISO/IEC 14443-4 Smart Card",
+    "speed": "106 - 424 kbit/sec",
+    "size": "2/4/8/106/144 KBytes",
+    "access": "Read/Write or Read-only",
+    "price": "Medium/High",
+    "products": "NXP DESfire, NXP SmartMX with JCOP, ST Microelectronics"
+  },
+  {
+    "format": "Type 5",
+    "compliant": "NFC-V",
+    "base": "ISO/IEC 15693",
+    "speed": "6.62 - 26.48 kbit/sec",
+    "size": "32/112/128/160/256 KBytes",
+    "access": "Read/Write",
+    "price": "Low/Medium",
+    "products": "NXP ICODE SLI(x), Texas Instruments Tag-It, HF-I, EM423x, ST Microelectronics"
+  }
+]
