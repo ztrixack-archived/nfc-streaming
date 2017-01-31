@@ -1,1 +1,1 @@
-include ':app', ':lazt-nfc'
+include ':app', ':nfc-streaming'

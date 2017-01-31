@@ -185,6 +185,7 @@ public class Nfc extends NfcWrapper {
      * NFC transceive function connects and closes NFC software service
      * automatically.
      *
+     * @param disconnect auto disconnection.
      * @param send_data raw data sent from device.
      * @return data received from NFC.
      */
