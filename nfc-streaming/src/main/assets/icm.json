@@ -1,0 +1,347 @@
+[
+  {
+    "id": 0,
+    "manufacturer": "Not Specified",
+    "location": "Unknown"
+  },
+  {
+    "id": 1,
+    "manufacturer": "Motorola",
+    "location": "UK"
+  },
+  {
+    "id": 2,
+    "manufacturer": "STMicroelectronics SA",
+    "location": "FR"
+  },
+  {
+    "id": 3,
+    "manufacturer": "Hitachi Ltd",
+    "location": "JP"
+  },
+  {
+    "id": 4,
+    "manufacturer": "NXP Semiconductors",
+    "location": "DE"
+  },
+  {
+    "id": 5,
+    "manufacturer": "Infineon Technologies AG",
+    "location": "DE"
+  },
+  {
+    "id": 6,
+    "manufacturer": "Cylink",
+    "location": "US"
+  },
+  {
+    "id": 7,
+    "manufacturer": "Texas Instruments Tag-it™",
+    "location": "FR"
+  },
+  {
+    "id": 8,
+    "manufacturer": "Fujitsu Limited",
+    "location": "JP"
+  },
+  {
+    "id": 9,
+    "manufacturer": "Matsushita Electronics Corporation, Semiconductor Company",
+    "location": "JP"
+  },
+  {
+    "id": 10,
+    "manufacturer": "NEC",
+    "location": "JP"
+  },
+  {
+    "id": 11,
+    "manufacturer": "Oki Electric Industry Co Ltd",
+    "location": "JP"
+  },
+  {
+    "id": 12,
+    "manufacturer": "Toshiba Corp",
+    "location": "JP"
+  },
+  {
+    "id": 13,
+    "manufacturer": "Mitsubishi Electric Corp",
+    "location": "JP"
+  },
+  {
+    "id": 14,
+    "manufacturer": "Samsung Electronics Co Ltd",
+    "location": "KR"
+  },
+  {
+    "id": 15,
+    "manufacturer": "Hynix",
+    "location": "KR"
+  },
+  {
+    "id": 16,
+    "manufacturer": "LG-Semiconductors Co Ltd",
+    "location": "KR"
+  },
+  {
+    "id": 17,
+    "manufacturer": "Emosyn-EM Microelectronics",
+    "location": "US"
+  },
+  {
+    "id": 18,
+    "manufacturer": "INSIDE Technology",
+    "location": "FR"
+  },
+  {
+    "id": 19,
+    "manufacturer": "ORGA Kartensysteme GmbH",
+    "location": "DE"
+  },
+  {
+    "id": 20,
+    "manufacturer": "Sharp Corporation",
+    "location": "JP"
+  },
+  {
+    "id": 21,
+    "manufacturer": "ATMEL",
+    "location": "FR"
+  },
+  {
+    "id": 22,
+    "manufacturer": "EM Microelectronic-Marin",
+    "location": "CH"
+  },
+  {
+    "id": 23,
+    "manufacturer": "KSW Microtec GmbH",
+    "location": "DE"
+  },
+  {
+    "id": 24,
+    "manufacturer": "ZMD AG",
+    "location": "DE"
+  },
+  {
+    "id": 25,
+    "manufacturer": "XICOR Inc",
+    "location": "US"
+  },
+  {
+    "id": 26,
+    "manufacturer": "Sony Corporation",
+    "location": "JP"
+  },
+  {
+    "id": 27,
+    "manufacturer": "Malaysia Microelectronic Solutions Sdn Bhd",
+    "location": "MY"
+  },
+  {
+    "id": 28,
+    "manufacturer": "Emosyn",
+    "location": "US"
+  },
+  {
+    "id": 29,
+    "manufacturer": "Shanghai Fudan Microelectronics Co Ltd",
+    "location": "CN"
+  },
+  {
+    "id": 30,
+    "manufacturer": "Magellan Technology Pty Limited",
+    "location": "AU"
+  },
+  {
+    "id": 31,
+    "manufacturer": "Melexis NV BO",
+    "location": "CH"
+  },
+  {
+    "id": 32,
+    "manufacturer": "Renesas Technology Corp",
+    "location": "JP"
+  },
+  {
+    "id": 33,
+    "manufacturer": "TAGSYS",
+    "location": "FR"
+  },
+  {
+    "id": 34,
+    "manufacturer": "Transcore",
+    "location": "US"
+  },
+  {
+    "id": 35,
+    "manufacturer": "Shanghai Belling Corp Ltd",
+    "location": "CN"
+  },
+  {
+    "id": 36,
+    "manufacturer": "Masktech Germany GmbH",
+    "location": "DE"
+  },
+  {
+    "id": 37,
+    "manufacturer": "Innovision Research and Technology Plc",
+    "location": "UK"
+  },
+  {
+    "id": 38,
+    "manufacturer": "Hitachi ULSI Systems Co Ltd ",
+    "location": "JP"
+  },
+  {
+    "id": 39,
+    "manufacturer": "Cypak AB",
+    "location": "SE"
+  },
+  {
+    "id": 40,
+    "manufacturer": "Ricoh",
+    "location": "JP"
+  },
+  {
+    "id": 41,
+    "manufacturer": "ASK",
+    "location": "FR"
+  },
+  {
+    "id": 42,
+    "manufacturer": "Unicore Microsystems LLC",
+    "location": "RU"
+  },
+  {
+    "id": 43,
+    "manufacturer": "Dallas semiconductor/Maxim",
+    "location": "US"
+  },
+  {
+    "id": 44,
+    "manufacturer": "Impinj Inc",
+    "location": "US"
+  },
+  {
+    "id": 45,
+    "manufacturer": "RightPlug Alliance",
+    "location": "US"
+  },
+  {
+    "id": 46,
+    "manufacturer": "Broadcom Corporation",
+    "location": "US"
+  },
+  {
+    "id": 47,
+    "manufacturer": "MStar Semiconductor Inc",
+    "location": "TW"
+  },
+  {
+    "id": 48,
+    "manufacturer": "BeeDar Technology Inc",
+    "location": "US"
+  },
+  {
+    "id": 49,
+    "manufacturer": "RFIDsec",
+    "location": "DK"
+  },
+  {
+    "id": 50,
+    "manufacturer": "Schweizer Electronic AG",
+    "location": "DE"
+  },
+  {
+    "id": 51,
+    "manufacturer": "AMIC Technology Corp",
+    "location": "TW"
+  },
+  {
+    "id": 52,
+    "manufacturer": "Mikron JSC",
+    "location": "RU"
+  },
+  {
+    "id": 53,
+    "manufacturer": "Fraunhofer Institute for Photonic Microsystems",
+    "location": "DE"
+  },
+  {
+    "id": 54,
+    "manufacturer": "IDS Microship AG",
+    "location": "CH"
+  },
+  {
+    "id": 55,
+    "manufacturer": "Kovio",
+    "location": "US"
+  },
+  {
+    "id": 56,
+    "manufacturer": "AHMT Microelectronic Ltd",
+    "location": "CH"
+  },
+  {
+    "id": 57,
+    "manufacturer": "Silicon Craft Technology",
+    "location": "TH"
+  },
+  {
+    "id": 58,
+    "manufacturer": "Advanced Film Device Inc.",
+    "location": "JP"
+  },
+  {
+    "id": 59,
+    "manufacturer": "Nitecrest Ltd",
+    "location": "UK"
+  },
+  {
+    "id": 60,
+    "manufacturer": "Verayo Inc.",
+    "location": "US"
+  },
+  {
+    "id": 61,
+    "manufacturer": "HID Global",
+    "location": "US"
+  },
+  {
+    "id": 62,
+    "manufacturer": "Productivity Engineering Gmbh",
+    "location": "DE"
+  },
+  {
+    "id": 63,
+    "manufacturer": "Austriamicrosystems AG (reserved)",
+    "location": "AT"
+  },
+  {
+    "id": 64,
+    "manufacturer": "Gemalto SA",
+    "location": "FR"
+  },
+  {
+    "id": 65,
+    "manufacturer": "Renesas Electronics Corporation",
+    "location": "JP"
+  },
+  {
+    "id": 66,
+    "manufacturer": "3Alogics Inc",
+    "location": "KR"
+  },
+  {
+    "id": 67,
+    "manufacturer": "Top TroniQ Asia Limited",
+    "location": "HK"
+  },
+  {
+    "id": 68,
+    "manufacturer": "Gentag Inc",
+    "location": "US"
+  }
+]
