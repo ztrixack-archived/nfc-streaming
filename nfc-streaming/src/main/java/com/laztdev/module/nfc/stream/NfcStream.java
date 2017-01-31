@@ -33,7 +33,6 @@ public class NfcStream {
         this.timeout = timeout;
     }
 
-
     public NfcStream startWith(byte[] buffer) {
         startData = new byte[0];
         if (buffer == null || buffer.length == 0) {
@@ -54,6 +53,10 @@ public class NfcStream {
 
     public NfcStream data(byte[]... buffer) {
         transferData.clear();
+        return add(buffer);
+    }
+
+    public NfcStream add(byte[]... buffer) {
         if (buffer == null || buffer.length == 0) {
             return this;
         }

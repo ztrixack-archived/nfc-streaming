@@ -54,7 +54,7 @@ public class Nfc extends NfcWrapper {
     }
 
     public String getTagType() {
-        return "";
+        return type.name();
     }
 
     public String[] getRfTechnology() {
