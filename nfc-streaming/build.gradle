@@ -7,8 +7,8 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 25
-        versionCode 1
-        versionName "0.1.0"
+        versionCode 2
+        versionName "0.2.0"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -43,7 +43,7 @@ ext {
     siteUrl = 'https://github.com/ztrixack/nfc-streaming'
     gitUrl = 'https://github.com/ztrixack/nfc-streaming.git'
 
-    libraryVersion = '0.1.0'
+    libraryVersion = '0.2.0'
 
     developerId = 'ztrixack'
     developerName = 'Tanawat Hongthai'
