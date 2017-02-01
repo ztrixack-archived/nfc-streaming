@@ -33,14 +33,14 @@ public abstract class NfcWrapper {
 
     private static final String TAG = NfcWrapper.class.getSimpleName();
 
+    protected Tag tag;
+
     private NfcAdapter mNfcAdapter;
     private Set<Class> mNfcClasses;
     private IntentFilter[] mIntentFilters;
     private String[][] mTechLists;
 
-    Tag tag;
-
-    NfcWrapper() {
+    protected NfcWrapper() {
         mNfcClasses = new HashSet<>();
     }
 

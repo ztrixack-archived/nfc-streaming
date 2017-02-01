@@ -27,12 +27,12 @@ public class Nfc extends NfcWrapper {
 
     private static final String TAG = Nfc.class.getSimpleName();
 
-    private int timeout;
 
     private static Nfc instance;
-    private TagTechnology mBasicTag;
-    private TagStatus status;
-    private TagType type = TagType.NULL;
+    protected TagTechnology mBasicTag;
+    protected TagStatus status;
+    protected TagType type = TagType.NULL;
+    protected int timeout;
 
     public static Nfc getInstance() {
         if (instance == null) {
@@ -41,7 +41,7 @@ public class Nfc extends NfcWrapper {
         return instance;
     }
 
-    private Nfc() {
+    protected Nfc() {
         super();
     }
 
@@ -80,30 +80,38 @@ public class Nfc extends NfcWrapper {
                 // Type 1 tag   NfcA (also known as ISO 14443-3A)
                 mBasicTag = NfcA.get(tag);
                 type = TagType.NFC_A;
+                timeout = getNfcTimeout();
                 return;
             } else if (tech.contains("NfcB")) {
                 // Type 2 tag   NfcB (also known as ISO 14443-3B)
                 mBasicTag = NfcB.get(tag);
                 type = TagType.NFC_B;
+                timeout = getNfcTimeout();
                 return;
             } else if (tech.contains("NfcF")) {
                 // Type 3 tag   NfcF (also known as JIS 6319-4)
                 mBasicTag = NfcF.get(tag);
                 type = TagType.NFC_F;
+                timeout = getNfcTimeout();
                 return;
             } else if (tech.contains("IsoDep")) {
                 // Type 4 tag   IsoDep (Smart Card)
                 mBasicTag = IsoDep.get(tag);
                 type = TagType.ISODEP;
+                timeout = getNfcTimeout();
                 return;
             } else if (tech.contains("NfcV")) {
                 // Type 5 tag   NfcV (also known as ISO 15693)
                 mBasicTag = NfcV.get(tag);
                 type = TagType.NFC_V;
+                timeout = getNfcTimeout();
                 return;
             }
         }
         Log.e(TAG, "Tag is not support");
+        mBasicTag = null;
+        type = TagType.NULL;
+        timeout = 0;
     }
 
     public Tag getTag() {
@@ -159,7 +167,7 @@ public class Nfc extends NfcWrapper {
     }
 
 
-    private int getMaxTransceiveLength() {
+    public int getMaxTransceiveLength() {
         return getNfcMaxTransceiveLength();
     }
 
@@ -195,7 +203,7 @@ public class Nfc extends NfcWrapper {
             if (!mBasicTag.isConnected()) {
                 mBasicTag.connect();
             }
-            setTimeout(timeout);
+            setNfcTimeout(timeout);
             recv = transceive(send_data);
             if (disconnect) {
                 mBasicTag.close();
@@ -216,12 +224,12 @@ public class Nfc extends NfcWrapper {
         return recv;
     }
 
-    private boolean isFoundTag() {
-        return tag != null;
+    public NfcStream begin() {
+        return new NfcStream(mBasicTag, timeout);
     }
 
     // Basic Tag Technology
-    private int getNfcMaxTransceiveLength() {
+    protected int getNfcMaxTransceiveLength() {
         switch (type) {
             case NULL:
                 return 0;
@@ -239,7 +247,7 @@ public class Nfc extends NfcWrapper {
         return 0;
     }
 
-    private byte[] transceive(byte[] data) throws IOException {
+    protected byte[] transceive(byte[] data) throws IOException {
         switch (type) {
             case NULL:
                 return null;
@@ -257,7 +265,7 @@ public class Nfc extends NfcWrapper {
         return null;
     }
 
-    private void setNfcTimeout(int timeout) {
+    protected void setNfcTimeout(int timeout) {
         switch (type) {
             case NULL:
                 break;
@@ -277,7 +285,7 @@ public class Nfc extends NfcWrapper {
         }
     }
 
-    private int getNfcTimeout() {
+    protected int getNfcTimeout() {
         switch (type) {
             case NULL:
                 return 0;
@@ -295,7 +303,8 @@ public class Nfc extends NfcWrapper {
         return 0;
     }
 
-    public NfcStream begin() {
-        return new NfcStream(mBasicTag, timeout);
+    protected boolean isFoundTag() {
+        return tag != null;
     }
+
 }
