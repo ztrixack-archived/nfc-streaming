@@ -4,19 +4,25 @@ import android.app.Activity;
 import android.content.Intent;
 import android.nfc.Tag;
 import android.nfc.tech.IsoDep;
+import android.nfc.tech.MifareClassic;
+import android.nfc.tech.MifareUltralight;
+import android.nfc.tech.Ndef;
+import android.nfc.tech.NdefFormatable;
 import android.nfc.tech.NfcA;
 import android.nfc.tech.NfcB;
+import android.nfc.tech.NfcBarcode;
 import android.nfc.tech.NfcF;
 import android.nfc.tech.NfcV;
 import android.nfc.tech.TagTechnology;
+import android.os.Build;
 import android.util.Log;
 
 import com.laztdev.module.nfc.info.RegistrationAuthority;
 import com.laztdev.module.nfc.stream.NfcStream;
 import com.laztdev.module.utils.TagStatus;
-import com.laztdev.module.utils.TagType;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 /**
  * @author Tanawat Hongthai - http://www.laztdev.com/
@@ -25,14 +31,13 @@ import java.io.IOException;
  */
 public class Nfc extends NfcWrapper {
 
-    private static final String TAG = Nfc.class.getSimpleName();
-
-
     private static Nfc instance;
-    protected TagTechnology mBasicTag;
-    protected TagStatus status;
-    protected TagType type = TagType.NULL;
-    protected int timeout;
+
+    private HashMap<String, TagTechnology> mMandatoryTags = new HashMap<>();
+    private HashMap<String, TagTechnology> mOptionalTags = new HashMap<>();
+    private String tagSelector;
+    private TagStatus status;
+    private int timeout;
 
     public static Nfc getInstance() {
         if (instance == null) {
@@ -50,11 +55,8 @@ public class Nfc extends NfcWrapper {
         super.onNewIntent(activity, intent);
         if (isFoundTag()) {
             initBasicTag();
+            initOptionalTag();
         }
-    }
-
-    public String getTagType() {
-        return type.name();
     }
 
     public String[] getRfTechnology() {
@@ -73,51 +75,41 @@ public class Nfc extends NfcWrapper {
         return RegistrationAuthority.getInstance().getManufacturerFormId(uid[0]);
     }
 
-
-    private void initBasicTag() {
-        for (String tech : tag.getTechList()) {
-            if (tech.contains("NfcA")) {
-                // Type 1 tag   NfcA (also known as ISO 14443-3A)
-                mBasicTag = NfcA.get(tag);
-                type = TagType.NFC_A;
-                timeout = getNfcTimeout();
-                return;
-            } else if (tech.contains("NfcB")) {
-                // Type 2 tag   NfcB (also known as ISO 14443-3B)
-                mBasicTag = NfcB.get(tag);
-                type = TagType.NFC_B;
-                timeout = getNfcTimeout();
-                return;
-            } else if (tech.contains("NfcF")) {
-                // Type 3 tag   NfcF (also known as JIS 6319-4)
-                mBasicTag = NfcF.get(tag);
-                type = TagType.NFC_F;
-                timeout = getNfcTimeout();
-                return;
-            } else if (tech.contains("IsoDep")) {
-                // Type 4 tag   IsoDep (Smart Card)
-                mBasicTag = IsoDep.get(tag);
-                type = TagType.ISODEP;
-                timeout = getNfcTimeout();
-                return;
-            } else if (tech.contains("NfcV")) {
-                // Type 5 tag   NfcV (also known as ISO 15693)
-                mBasicTag = NfcV.get(tag);
-                type = TagType.NFC_V;
-                timeout = getNfcTimeout();
-                return;
-            }
-        }
-        Log.e(TAG, "Tag is not support");
-        mBasicTag = null;
-        type = TagType.NULL;
-        timeout = 0;
-    }
-
     public Tag getTag() {
         return tag;
     }
 
+    public int getMandatoryTagsLength() {
+        return mMandatoryTags.size();
+    }
+
+    public int getOptionalTagsLength() {
+        return mOptionalTags.size();
+    }
+
+    public String getTagSelector() {
+        return tagSelector;
+    }
+
+    public void setTagSelector(String tagSelector) {
+        if (mMandatoryTags.containsKey(tagSelector)) {
+            this.tagSelector = tagSelector;
+        }
+    }
+
+    public void setTagSelectorByIndex(int i) {
+        if (mMandatoryTags.containsKey(tag.getTechList()[i])) {
+            this.tagSelector = tag.getTechList()[i];
+        }
+    }
+
+    public TagStatus getStatus() {
+        return status;
+    }
+
+    public boolean isFoundTag() {
+        return tag != null;
+    }
     /**
      * Checks whether a tag exists in a NFC field.
      *
@@ -127,20 +119,20 @@ public class Nfc extends NfcWrapper {
         boolean isConnected;
 
         try {
-            isConnected = mBasicTag.isConnected();
+            isConnected = mMandatoryTags.get(tagSelector).isConnected();
             if (isConnected) {
-                mBasicTag.close();
+                mMandatoryTags.get(tagSelector).close();
             }
-            mBasicTag.connect();
+            mMandatoryTags.get(tagSelector).connect();
             if (!isConnected) {
-                mBasicTag.close();
+                mMandatoryTags.get(tagSelector).close();
             }
         } catch (IOException e) {
-            Log.e(TAG, e.getMessage());
+            e.printStackTrace();
             status = TagStatus.DISAPPEAR;
         } catch (Exception e) {
             if (e.getMessage() != null) {
-                Log.e(TAG, e.getMessage());
+                e.printStackTrace();
             }
             status = TagStatus.DISAPPEAR;
         }
@@ -176,8 +168,8 @@ public class Nfc extends NfcWrapper {
      */
     public void close() {
         try {
-            if (mBasicTag.isConnected()) {
-                mBasicTag.close();
+            if (mMandatoryTags.get(tagSelector).isConnected()) {
+                mMandatoryTags.get(tagSelector).close();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -194,23 +186,23 @@ public class Nfc extends NfcWrapper {
      * automatically.
      *
      * @param disconnect auto disconnection.
-     * @param send_data raw data sent from device.
+     * @param send_data  raw data sent from device.
      * @return data received from NFC.
      */
     public synchronized byte[] autoTransceive(boolean disconnect, byte[] send_data) {
         byte[] recv = null;
         try {
-            if (!mBasicTag.isConnected()) {
-                mBasicTag.connect();
+            if (!mMandatoryTags.get(tagSelector).isConnected()) {
+                mMandatoryTags.get(tagSelector).connect();
             }
             setNfcTimeout(timeout);
             recv = transceive(send_data);
             if (disconnect) {
-                mBasicTag.close();
+                mMandatoryTags.get(tagSelector).close();
             }
             status = TagStatus.EXCHANGE;
         } catch (IOException e) {
-            Log.e(TAG, e.getMessage());
+            e.printStackTrace();
             if (e.getMessage().contains("Transceive failed")) {
                 status = TagStatus.RESP_FAIL;
             } else {
@@ -219,92 +211,136 @@ public class Nfc extends NfcWrapper {
         } catch (Exception e) {
             if (e.getMessage() == null) {
                 status = TagStatus.DISAPPEAR;
+            } else {
+                e.printStackTrace();
             }
         }
         return recv;
     }
 
     public NfcStream begin() {
-        return new NfcStream(mBasicTag, timeout);
+        return new NfcStream(mMandatoryTags.get(tagSelector), timeout);
     }
 
     // Basic Tag Technology
     protected int getNfcMaxTransceiveLength() {
-        switch (type) {
-            case NULL:
-                return 0;
-            case NFC_A:
-                return ((NfcA) mBasicTag).getMaxTransceiveLength();
-            case NFC_B:
-                return ((NfcB) mBasicTag).getMaxTransceiveLength();
-            case NFC_F:
-                return ((NfcF) mBasicTag).getMaxTransceiveLength();
-            case ISODEP:
-                return ((IsoDep) mBasicTag).getMaxTransceiveLength();
-            case NFC_V:
-                return ((NfcV) mBasicTag).getMaxTransceiveLength();
+        if (mMandatoryTags.get(tagSelector) instanceof NfcA) {
+            return ((NfcA) mMandatoryTags.get(tagSelector)).getMaxTransceiveLength();
+        } else if (mMandatoryTags.get(tagSelector) instanceof NfcB) {
+            return ((NfcB) mMandatoryTags.get(tagSelector)).getMaxTransceiveLength();
+        } else if (mMandatoryTags.get(tagSelector) instanceof NfcF) {
+            return ((NfcF) mMandatoryTags.get(tagSelector)).getMaxTransceiveLength();
+        } else if (mMandatoryTags.get(tagSelector) instanceof IsoDep) {
+            return ((IsoDep) mMandatoryTags.get(tagSelector)).getMaxTransceiveLength();
+        } else if (mMandatoryTags.get(tagSelector) instanceof NfcV) {
+            return ((NfcV) mMandatoryTags.get(tagSelector)).getMaxTransceiveLength();
         }
+
         return 0;
     }
 
     protected byte[] transceive(byte[] data) throws IOException {
-        switch (type) {
-            case NULL:
-                return null;
-            case NFC_A:
-                return ((NfcA) mBasicTag).transceive(data);
-            case NFC_B:
-                return ((NfcB) mBasicTag).transceive(data);
-            case NFC_F:
-                return ((NfcF) mBasicTag).transceive(data);
-            case ISODEP:
-                return ((IsoDep) mBasicTag).transceive(data);
-            case NFC_V:
-                return ((NfcV) mBasicTag).transceive(data);
+        if (mMandatoryTags.get(tagSelector) instanceof NfcA) {
+            return ((NfcA) mMandatoryTags.get(tagSelector)).transceive(data);
+        } else if (mMandatoryTags.get(tagSelector) instanceof NfcB) {
+            return ((NfcB) mMandatoryTags.get(tagSelector)).transceive(data);
+        } else if (mMandatoryTags.get(tagSelector) instanceof NfcF) {
+            return ((NfcF) mMandatoryTags.get(tagSelector)).transceive(data);
+        } else if (mMandatoryTags.get(tagSelector) instanceof IsoDep) {
+            return ((IsoDep) mMandatoryTags.get(tagSelector)).transceive(data);
+        } else if (mMandatoryTags.get(tagSelector) instanceof NfcV) {
+            return ((NfcV) mMandatoryTags.get(tagSelector)).transceive(data);
         }
+
         return null;
     }
 
     protected void setNfcTimeout(int timeout) {
-        switch (type) {
-            case NULL:
-                break;
-            case NFC_A:
-                ((NfcA) mBasicTag).setTimeout(timeout);
-                break;
-            case NFC_B:
-                break;
-            case NFC_F:
-                ((NfcF) mBasicTag).setTimeout(timeout);
-                break;
-            case ISODEP:
-                ((IsoDep) mBasicTag).setTimeout(timeout);
-                break;
-            case NFC_V:
-                break;
+        if (mMandatoryTags.get(tagSelector) instanceof NfcA) {
+            ((NfcA) mMandatoryTags.get(tagSelector)).setTimeout(timeout);
+        } else if (mMandatoryTags.get(tagSelector) instanceof NfcF) {
+            ((NfcF) mMandatoryTags.get(tagSelector)).setTimeout(timeout);
+        } else if (mMandatoryTags.get(tagSelector) instanceof IsoDep) {
+            ((IsoDep) mMandatoryTags.get(tagSelector)).setTimeout(timeout);
         }
     }
 
     protected int getNfcTimeout() {
-        switch (type) {
-            case NULL:
-                return 0;
-            case NFC_A:
-                return ((NfcA) mBasicTag).getTimeout();
-            case NFC_B:
-                return 0;
-            case NFC_F:
-                return ((NfcF) mBasicTag).getTimeout();
-            case ISODEP:
-                return ((IsoDep) mBasicTag).getTimeout();
-            case NFC_V:
-                return 0;
+        if (mMandatoryTags.get(tagSelector) instanceof NfcA) {
+            return ((NfcA) mMandatoryTags.get(tagSelector)).getTimeout();
+        } else if (mMandatoryTags.get(tagSelector) instanceof NfcF) {
+            return ((NfcF) mMandatoryTags.get(tagSelector)).getTimeout();
+        } else if (mMandatoryTags.get(tagSelector) instanceof IsoDep) {
+            return ((IsoDep) mMandatoryTags.get(tagSelector)).getTimeout();
         }
-        return 0;
+
+        return timeout;
     }
 
-    protected boolean isFoundTag() {
-        return tag != null;
+    private void initBasicTag() {
+        timeout = 0;
+        mMandatoryTags.clear();
+        tagSelector = tag.getTechList()[0];
+
+        for (String tech : tag.getTechList()) {
+            switch (tech) {
+                case "android.nfc.tech.NfcA":
+                    // Type 1 tag   NfcA (also known as ISO 14443-3A)
+                    mMandatoryTags.put(tech, NfcA.get(tag));
+                    timeout = getNfcTimeout();
+                    break;
+                case "android.nfc.tech.NfcB":
+                    // Type 2 tag   NfcB (also known as ISO 14443-3B)
+                    mMandatoryTags.put(tech, NfcB.get(tag));
+                    timeout = getNfcTimeout();
+                    break;
+                case "android.nfc.tech.NfcF":
+                    // Type 3 tag   NfcF (also known as JIS 6319-4)
+                    mMandatoryTags.put(tech, NfcF.get(tag));
+                    timeout = getNfcTimeout();
+                    break;
+                case "android.nfc.tech.IsoDep":
+                    // Type 4 tag   IsoDep (Smart Card)
+                    mMandatoryTags.put(tech, IsoDep.get(tag));
+                    timeout = getNfcTimeout();
+                    break;
+                case "android.nfc.tech.NfcV":
+                    // Type 5 tag   NfcV (also known as ISO 15693)
+                    mMandatoryTags.put(tech, NfcV.get(tag));
+                    timeout = getNfcTimeout();
+                    break;
+                case "android.nfc.tech.Ndef":
+                    // Ndef support
+                    mMandatoryTags.put(tech, Ndef.get(tag));
+                    timeout = getNfcTimeout();
+                    break;
+            }
+        }
     }
+
+    private void initOptionalTag() {
+        mOptionalTags.clear();
+
+        for (String tech : tag.getTechList()) {
+            switch (tech) {
+                case "android.nfc.tech.MifareClassic":
+                    mOptionalTags.put(tech, MifareClassic.get(tag));
+                    break;
+                case "android.nfc.tech.MifareUltralight":
+                    mOptionalTags.put(tech, MifareUltralight.get(tag));
+                    break;
+                case "android.nfc.tech.NfcBarcode":
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                        mOptionalTags.put(tech, NfcBarcode.get(tag));
+                    }
+                    break;
+                case "android.nfc.tech.NdefFormatable":
+                    // NDEF compatible
+                    mOptionalTags.put(tech, NdefFormatable.get(tag));
+                    break;
+            }
+        }
+    }
+
 
 }
