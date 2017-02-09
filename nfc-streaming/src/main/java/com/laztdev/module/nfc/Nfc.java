@@ -15,7 +15,6 @@ import android.nfc.tech.NfcF;
 import android.nfc.tech.NfcV;
 import android.nfc.tech.TagTechnology;
 import android.os.Build;
-import android.util.Log;
 
 import com.laztdev.module.nfc.info.RegistrationAuthority;
 import com.laztdev.module.nfc.stream.NfcStream;
