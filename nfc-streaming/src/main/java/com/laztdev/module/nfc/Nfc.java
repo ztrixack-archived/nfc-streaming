@@ -106,6 +106,10 @@ public class Nfc extends NfcWrapper {
         return status;
     }
 
+    protected void setStatus(TagStatus status) {
+        this.status = status;
+    }
+
     public boolean isFoundTag() {
         return tag != null;
     }
