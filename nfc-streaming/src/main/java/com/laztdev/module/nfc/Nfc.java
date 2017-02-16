@@ -3,6 +3,7 @@ package com.laztdev.module.nfc;
 import android.app.Activity;
 import android.content.Intent;
 import android.nfc.Tag;
+import android.nfc.TagLostException;
 import android.nfc.tech.IsoDep;
 import android.nfc.tech.MifareClassic;
 import android.nfc.tech.MifareUltralight;
@@ -59,11 +60,11 @@ public class Nfc extends NfcWrapper {
     }
 
     public String[] getRfTechnology() {
-        return tag.getTechList();
+        return tag == null ? null : tag.getTechList();
     }
 
     public byte[] getUid() {
-        return tag.getId();
+        return tag == null ? null : tag.getId();
     }
 
     public String getManufacturer() {
@@ -97,7 +98,7 @@ public class Nfc extends NfcWrapper {
     }
 
     public void setTagSelectorByIndex(int i) {
-        if (mMandatoryTags.containsKey(tag.getTechList()[i])) {
+        if (tag != null && mMandatoryTags.containsKey(tag.getTechList()[i])) {
             this.tagSelector = tag.getTechList()[i];
         }
     }
@@ -110,9 +111,21 @@ public class Nfc extends NfcWrapper {
         this.status = status;
     }
 
+    public void exception() throws IOException {
+        switch (this.status) {
+            case DISAPPEAR:
+                throw new TagLostException();
+            case RESP_FAIL:
+                throw new IOException();
+            case EXCHANGE:
+                break;
+        }
+    }
+
     public boolean isFoundTag() {
         return tag != null;
     }
+
     /**
      * Checks whether a tag exists in a NFC field.
      *
@@ -130,13 +143,7 @@ public class Nfc extends NfcWrapper {
             if (!isConnected) {
                 mMandatoryTags.get(tagSelector).close();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-            status = TagStatus.DISAPPEAR;
         } catch (Exception e) {
-            if (e.getMessage() != null) {
-                e.printStackTrace();
-            }
             status = TagStatus.DISAPPEAR;
         }
 
@@ -175,7 +182,6 @@ public class Nfc extends NfcWrapper {
                 mMandatoryTags.get(tagSelector).close();
             }
         } catch (Exception e) {
-            e.printStackTrace();
             status = TagStatus.DISAPPEAR;
         }
     }
@@ -205,7 +211,6 @@ public class Nfc extends NfcWrapper {
             }
             status = TagStatus.EXCHANGE;
         } catch (IOException e) {
-            e.printStackTrace();
             if (e.getMessage().contains("Transceive failed")) {
                 status = TagStatus.RESP_FAIL;
             } else {
@@ -214,8 +219,6 @@ public class Nfc extends NfcWrapper {
         } catch (Exception e) {
             if (e.getMessage() == null) {
                 status = TagStatus.DISAPPEAR;
-            } else {
-                e.printStackTrace();
             }
         }
         return recv;
