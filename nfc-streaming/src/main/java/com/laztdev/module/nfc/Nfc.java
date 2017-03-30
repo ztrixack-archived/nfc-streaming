@@ -16,6 +16,7 @@ import android.nfc.tech.NfcF;
 import android.nfc.tech.NfcV;
 import android.nfc.tech.TagTechnology;
 import android.os.Build;
+import android.util.Log;
 
 import com.laztdev.module.nfc.info.RegistrationAuthority;
 import com.laztdev.module.nfc.stream.NfcStream;
@@ -219,6 +220,9 @@ public class Nfc extends NfcWrapper {
         } catch (Exception e) {
             if (e.getMessage() == null) {
                 status = TagStatus.DISAPPEAR;
+            } else {
+                // Write EEPROM case
+                status = TagStatus.EXCHANGE;
             }
         }
         return recv;
@@ -240,9 +244,9 @@ public class Nfc extends NfcWrapper {
             return ((IsoDep) mMandatoryTags.get(tagSelector)).getMaxTransceiveLength();
         } else if (mMandatoryTags.get(tagSelector) instanceof NfcV) {
             return ((NfcV) mMandatoryTags.get(tagSelector)).getMaxTransceiveLength();
+        } else {
+            return 0;
         }
-
-        return 0;
     }
 
     protected byte[] transceive(byte[] data) throws IOException {
@@ -256,9 +260,9 @@ public class Nfc extends NfcWrapper {
             return ((IsoDep) mMandatoryTags.get(tagSelector)).transceive(data);
         } else if (mMandatoryTags.get(tagSelector) instanceof NfcV) {
             return ((NfcV) mMandatoryTags.get(tagSelector)).transceive(data);
+        } else {
+            return null;
         }
-
-        return null;
     }
 
     protected void setNfcTimeout(int timeout) {
@@ -268,6 +272,8 @@ public class Nfc extends NfcWrapper {
             ((NfcF) mMandatoryTags.get(tagSelector)).setTimeout(timeout);
         } else if (mMandatoryTags.get(tagSelector) instanceof IsoDep) {
             ((IsoDep) mMandatoryTags.get(tagSelector)).setTimeout(timeout);
+        } else {
+            Log.w(getClass().getSimpleName(), "Timeout can't be set, please choose the Mandatory Tag as NfcA, NfcF or IsoDep.");
         }
     }
 
@@ -278,9 +284,9 @@ public class Nfc extends NfcWrapper {
             return ((NfcF) mMandatoryTags.get(tagSelector)).getTimeout();
         } else if (mMandatoryTags.get(tagSelector) instanceof IsoDep) {
             return ((IsoDep) mMandatoryTags.get(tagSelector)).getTimeout();
+        } else {
+            return timeout;
         }
-
-        return timeout;
     }
 
     private void initBasicTag() {
@@ -295,30 +301,38 @@ public class Nfc extends NfcWrapper {
                     mMandatoryTags.put(tech, NfcA.get(tag));
                     timeout = getNfcTimeout();
                     break;
+
                 case "android.nfc.tech.NfcB":
                     // Type 2 tag   NfcB (also known as ISO 14443-3B)
                     mMandatoryTags.put(tech, NfcB.get(tag));
                     timeout = getNfcTimeout();
                     break;
+
                 case "android.nfc.tech.NfcF":
                     // Type 3 tag   NfcF (also known as JIS 6319-4)
                     mMandatoryTags.put(tech, NfcF.get(tag));
                     timeout = getNfcTimeout();
                     break;
+
                 case "android.nfc.tech.IsoDep":
                     // Type 4 tag   IsoDep (Smart Card)
                     mMandatoryTags.put(tech, IsoDep.get(tag));
                     timeout = getNfcTimeout();
                     break;
+
                 case "android.nfc.tech.NfcV":
                     // Type 5 tag   NfcV (also known as ISO 15693)
                     mMandatoryTags.put(tech, NfcV.get(tag));
                     timeout = getNfcTimeout();
                     break;
+
                 case "android.nfc.tech.Ndef":
                     // Ndef support
                     mMandatoryTags.put(tech, Ndef.get(tag));
                     timeout = getNfcTimeout();
+                    break;
+
+                default:
                     break;
             }
         }
@@ -343,6 +357,9 @@ public class Nfc extends NfcWrapper {
                 case "android.nfc.tech.NdefFormatable":
                     // NDEF compatible
                     mOptionalTags.put(tech, NdefFormatable.get(tag));
+                    break;
+
+                default:
                     break;
             }
         }
